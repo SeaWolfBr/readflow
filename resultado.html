@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Resultado | ReadFlow</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Resultado do Treino</h1>
+
+    <p><strong>Tempo de leitura:</strong> <span id="tempoLeitura"></span></p>
+    <p><strong>Velocidade:</strong> <span id="velocidade"></span> palavras por minuto</p>
+    <p><strong>Classificação:</strong> <span id="classificacao"></span></p>
+    <p><strong>Acertos:</strong> <span id="acertos"></span> de 5</p>
+
+    <div id="feedbackPerguntas"></div>
+
+    <hr />
+    <button onclick="refazer()">Novo Tema</button>
+    <button onclick="reler()">Reler Texto</button>
+    <button onclick="encerrar()">Encerrar</button>
+  </div>
+
+  <script src="js/resultado.js"></script>
+</body>
+</html>
