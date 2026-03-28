@@ -1,33 +1,705 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ReadFlow - Configuração</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <title>ReadFlow | Treino de Leitura</title>
+  <style>
+    :root {
+      --bg: #f3f6fb;
+      --card: #ffffff;
+      --line: #dbe3ef;
+      --text: #1f2937;
+      --muted: #5b6472;
+      --primary: #2d62e9;
+      --primary-dark: #214db8;
+      --success: #0f9d58;
+      --danger: #d93025;
+      --focus: #fff5c2;
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, Segoe UI, Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .page {
+      max-width: 1000px;
+      margin: 28px auto;
+      padding: 0 16px 28px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: clamp(1.7rem, 4vw, 2.2rem);
+      color: #1a3d95;
+    }
+
+    .header p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    @media (min-width: 760px) {
+      .tabs { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    .tab-btn {
+      border: 1px solid var(--line);
+      background: var(--card);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .panel {
+      display: none;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: 0 4px 16px rgba(31, 41, 55, 0.06);
+    }
+
+    .panel.active { display: block; }
+
+    .panel h2 {
+      margin-top: 0;
+      margin-bottom: 6px;
+      font-size: 1.3rem;
+    }
+
+    .panel .description {
+      margin-top: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .field { margin-top: 14px; }
+
+    .field label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    textarea,
+    input[type="number"],
+    input[type="range"] {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 1rem;
+      font-family: inherit;
+      background: #fff;
+    }
+
+    textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+
+    .inline-controls {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    @media (min-width: 760px) {
+      .inline-controls.two { grid-template-columns: 1fr 1fr; }
+      .inline-controls.three { grid-template-columns: 1fr 1fr 1fr; }
+    }
+
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    button.action {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: #fff;
+      background: var(--primary);
+    }
+
+    button.action:hover { background: var(--primary-dark); }
+
+    button.secondary { background: #4b5563; }
+    button.secondary:hover { background: #374151; }
+
+    button.ghost {
+      background: #fff;
+      color: #1f2937;
+      border: 1px solid var(--line);
+    }
+
+    button.ghost:hover { background: #f8fafc; }
+
+    .display-box {
+      margin-top: 14px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fbfdff;
+      min-height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 16px;
+    }
+
+    .rsvp-word {
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      font-weight: 700;
+      color: #13398d;
+      word-break: break-word;
+    }
+
+    .progress {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      text-align: center;
+    }
+
+    .focus-reader,
+    .speed-reader {
+      margin-top: 14px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fbfdff;
+      padding: 16px;
+      min-height: 180px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      max-height: 340px;
+      overflow: auto;
+      line-height: 1.8;
+    }
+
+    .focus-word {
+      transition: background 0.2s;
+      border-radius: 4px;
+      padding: 1px 2px;
+    }
+
+    .focus-word.active {
+      background: var(--focus);
+      box-shadow: inset 0 -8px 0 rgba(255, 230, 109, 0.5);
+    }
+
+    .meta {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .timer {
+      margin-top: 12px;
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: #173f9f;
+      text-align: center;
+    }
+
+    .result {
+      margin-top: 12px;
+      border: 1px solid #cfe3d8;
+      background: #eefbf3;
+      border-radius: 12px;
+      padding: 12px;
+      display: none;
+    }
+
+    .result.show { display: block; }
+
+    .result h3 {
+      margin: 0 0 8px;
+      color: #166534;
+    }
+
+    .hint {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .empty-message {
+      color: var(--muted);
+      text-align: center;
+      font-style: italic;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <h1>ReadFlow</h1>
-    <p>Configure seu exercício de leitura:</p>
+  <main class="page">
+    <header class="header">
+      <h1>ReadFlow</h1>
+      <p>Treine sua leitura com 4 modos: RSVP, Foco, Chunking e Teste de Velocidade.</p>
+    </header>
 
-    <label for="language">Idioma do texto:</label>
-    <select id="language">
-      <option value="pt">Português</option>
-      <option value="en">Inglês</option>
-      <option value="es">Espanhol</option>
-      <option value="zh">Chinês</option>
-    </select>
+    <nav class="tabs" aria-label="Modos de leitura">
+      <button class="tab-btn active" data-tab="rsvp">RSVP</button>
+      <button class="tab-btn" data-tab="foco">Foco</button>
+      <button class="tab-btn" data-tab="chunking">Chunking</button>
+      <button class="tab-btn" data-tab="velocidade">Teste de Velocidade</button>
+    </nav>
 
-    <label for="time">Tempo de leitura (em segundos):</label>
-    <input type="number" id="time" min="30" step="10" value="300" />
+    <section id="panel-rsvp" class="panel active">
+      <h2>RSVP</h2>
+      <p class="description">Mostra uma palavra por vez para aumentar foco e ritmo.</p>
+      <div class="field">
+        <label for="rsvp-text">Cole seu texto:</label>
+        <textarea id="rsvp-text" placeholder="Cole aqui o texto para treinar no modo RSVP..."></textarea>
+      </div>
+      <div class="inline-controls two">
+        <div class="field">
+          <label for="rsvp-wpm">Velocidade (palavras por minuto): <span id="rsvp-wpm-label">250</span></label>
+          <input id="rsvp-wpm" type="range" min="100" max="700" step="10" value="250" />
+        </div>
+      </div>
+      <div class="buttons">
+        <button class="action" id="rsvp-start">Iniciar</button>
+        <button class="action secondary" id="rsvp-pause">Pausar</button>
+        <button class="action ghost" id="rsvp-reset">Reiniciar</button>
+      </div>
+      <div class="display-box"><div class="rsvp-word" id="rsvp-word">Pronto para começar</div></div>
+      <div class="progress" id="rsvp-progress">0 / 0 palavras</div>
+    </section>
 
-    <label for="topic">Tema da leitura:</label>
-    <input type="text" id="topic" placeholder="Ex: Meio ambiente, História..." />
+    <section id="panel-foco" class="panel">
+      <h2>Foco</h2>
+      <p class="description">Mostra o texto completo e destaca a palavra atual automaticamente.</p>
+      <div class="field">
+        <label for="focus-text">Cole seu texto:</label>
+        <textarea id="focus-text" placeholder="Cole aqui o texto para treinar no modo Foco..."></textarea>
+      </div>
+      <div class="field">
+        <label for="focus-wpm">Velocidade (palavras por minuto): <span id="focus-wpm-label">220</span></label>
+        <input id="focus-wpm" type="range" min="80" max="500" step="10" value="220" />
+      </div>
+      <div class="buttons">
+        <button class="action" id="focus-start">Iniciar</button>
+        <button class="action secondary" id="focus-pause">Pausar</button>
+        <button class="action ghost" id="focus-reset">Reiniciar</button>
+      </div>
+      <div class="focus-reader" id="focus-reader"><p class="empty-message">O texto completo aparecerá aqui.</p></div>
+      <div class="meta" id="focus-meta">0 / 0 palavras destacadas</div>
+    </section>
 
-    <button id="startBtn">Começar Leitura</button>
-  </div>
+    <section id="panel-chunking" class="panel">
+      <h2>Chunking</h2>
+      <p class="description">Mostra blocos de palavras para melhorar percepção de frases.</p>
+      <div class="field">
+        <label for="chunk-text">Cole seu texto:</label>
+        <textarea id="chunk-text" placeholder="Cole aqui o texto para treinar no modo Chunking..."></textarea>
+      </div>
+      <div class="inline-controls two">
+        <div class="field">
+          <label for="chunk-size">Palavras por bloco:</label>
+          <input id="chunk-size" type="number" min="2" max="8" step="1" value="3" />
+        </div>
+        <div class="field">
+          <label for="chunk-wpm">Velocidade (palavras por minuto): <span id="chunk-wpm-label">240</span></label>
+          <input id="chunk-wpm" type="range" min="80" max="600" step="10" value="240" />
+        </div>
+      </div>
+      <div class="buttons">
+        <button class="action" id="chunk-start">Iniciar</button>
+        <button class="action secondary" id="chunk-pause">Pausar</button>
+        <button class="action ghost" id="chunk-reset">Reiniciar</button>
+      </div>
+      <div class="display-box"><div class="rsvp-word" id="chunk-word">Pronto para começar</div></div>
+      <div class="progress" id="chunk-progress">0 / 0 blocos</div>
+    </section>
 
-  <script src="js/main.js"></script>
+    <section id="panel-velocidade" class="panel">
+      <h2>Teste de Velocidade</h2>
+      <p class="description">Meça seu tempo real de leitura e veja seu PPM (palavras por minuto).</p>
+      <div class="field">
+        <label for="speed-text">Cole ou digite o texto completo:</label>
+        <textarea id="speed-text" placeholder="Cole aqui o texto completo para medir sua velocidade..."></textarea>
+      </div>
+      <div class="buttons">
+        <button class="action" id="speed-start">Iniciar</button>
+        <button class="action secondary" id="speed-stop">Parar</button>
+        <button class="action ghost" id="speed-reset">Reiniciar</button>
+      </div>
+      <div class="timer" id="speed-timer">00:00</div>
+      <div class="speed-reader" id="speed-reader"><p class="empty-message">O texto para leitura aparecerá aqui após clicar em Iniciar.</p></div>
+      <div class="result" id="speed-result">
+        <h3>Resultado final</h3>
+        <p><strong>Tempo total:</strong> <span id="result-time">0s</span></p>
+        <p><strong>Total de palavras:</strong> <span id="result-words">0</span></p>
+        <p><strong>Velocidade:</strong> <span id="result-ppm">0</span> PPM</p>
+      </div>
+      <p class="hint">Dica: leia no seu ritmo normal para medir um resultado real.</p>
+    </section>
+  </main>
+
+  <script>
+    const tabs = document.querySelectorAll('.tab-btn');
+    const panels = {
+      rsvp: document.getElementById('panel-rsvp'),
+      foco: document.getElementById('panel-foco'),
+      chunking: document.getElementById('panel-chunking'),
+      velocidade: document.getElementById('panel-velocidade')
+    };
+
+    tabs.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const tab = btn.dataset.tab;
+        tabs.forEach((b) => b.classList.remove('active'));
+        Object.values(panels).forEach((panel) => panel.classList.remove('active'));
+        btn.classList.add('active');
+        panels[tab].classList.add('active');
+      });
+    });
+
+    function splitWords(text) {
+      return text.trim().split(/\s+/).filter(Boolean);
+    }
+
+    function secFromWpm(wpm, wordsPerStep = 1) {
+      return (60 / Math.max(wpm, 1)) * wordsPerStep * 1000;
+    }
+
+    // RSVP
+    const rsvp = {
+      text: document.getElementById('rsvp-text'),
+      wpm: document.getElementById('rsvp-wpm'),
+      wpmLabel: document.getElementById('rsvp-wpm-label'),
+      word: document.getElementById('rsvp-word'),
+      progress: document.getElementById('rsvp-progress'),
+      startBtn: document.getElementById('rsvp-start'),
+      pauseBtn: document.getElementById('rsvp-pause'),
+      resetBtn: document.getElementById('rsvp-reset'),
+      words: [],
+      index: 0,
+      timer: null,
+      running: false
+    };
+
+    rsvp.wpm.addEventListener('input', () => rsvp.wpmLabel.textContent = rsvp.wpm.value);
+
+    function updateRsvpView() {
+      rsvp.word.textContent = rsvp.words.length ? (rsvp.words[rsvp.index] || 'Fim da leitura') : 'Pronto para começar';
+      rsvp.progress.textContent = `${Math.min(rsvp.index + (rsvp.words.length ? 1 : 0), rsvp.words.length)} / ${rsvp.words.length} palavras`;
+    }
+
+    function stopRsvp() {
+      clearInterval(rsvp.timer);
+      rsvp.timer = null;
+      rsvp.running = false;
+    }
+
+    rsvp.startBtn.addEventListener('click', () => {
+      if (rsvp.running) return;
+      if (!rsvp.words.length || rsvp.index >= rsvp.words.length) {
+        rsvp.words = splitWords(rsvp.text.value);
+        rsvp.index = 0;
+      }
+      if (!rsvp.words.length) {
+        alert('Cole um texto no modo RSVP antes de iniciar.');
+        return;
+      }
+      updateRsvpView();
+      rsvp.running = true;
+      rsvp.timer = setInterval(() => {
+        rsvp.index += 1;
+        if (rsvp.index >= rsvp.words.length) {
+          rsvp.word.textContent = 'Fim da leitura';
+          rsvp.progress.textContent = `${rsvp.words.length} / ${rsvp.words.length} palavras`;
+          stopRsvp();
+          return;
+        }
+        updateRsvpView();
+      }, secFromWpm(Number(rsvp.wpm.value)));
+    });
+
+    rsvp.pauseBtn.addEventListener('click', stopRsvp);
+
+    rsvp.resetBtn.addEventListener('click', () => {
+      stopRsvp();
+      rsvp.words = [];
+      rsvp.index = 0;
+      updateRsvpView();
+    });
+
+    updateRsvpView();
+
+    // Foco
+    const focus = {
+      text: document.getElementById('focus-text'),
+      wpm: document.getElementById('focus-wpm'),
+      wpmLabel: document.getElementById('focus-wpm-label'),
+      reader: document.getElementById('focus-reader'),
+      meta: document.getElementById('focus-meta'),
+      startBtn: document.getElementById('focus-start'),
+      pauseBtn: document.getElementById('focus-pause'),
+      resetBtn: document.getElementById('focus-reset'),
+      spans: [],
+      index: 0,
+      timer: null,
+      running: false
+    };
+
+    focus.wpm.addEventListener('input', () => focus.wpmLabel.textContent = focus.wpm.value);
+
+    function buildFocusText() {
+      const words = splitWords(focus.text.value);
+      focus.reader.innerHTML = '';
+      focus.spans = [];
+      if (!words.length) {
+        focus.reader.innerHTML = '<p class="empty-message">O texto completo aparecerá aqui.</p>';
+        focus.meta.textContent = '0 / 0 palavras destacadas';
+        return false;
+      }
+
+      const fragment = document.createDocumentFragment();
+      words.forEach((w) => {
+        const span = document.createElement('span');
+        span.className = 'focus-word';
+        span.textContent = w + ' ';
+        fragment.appendChild(span);
+        focus.spans.push(span);
+      });
+      focus.reader.appendChild(fragment);
+      focus.index = 0;
+      focus.meta.textContent = `1 / ${focus.spans.length} palavras destacadas`;
+      highlightFocusWord();
+      return true;
+    }
+
+    function highlightFocusWord() {
+      focus.spans.forEach((s) => s.classList.remove('active'));
+      const current = focus.spans[focus.index];
+      if (!current) return;
+      current.classList.add('active');
+      current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      focus.meta.textContent = `${focus.index + 1} / ${focus.spans.length} palavras destacadas`;
+    }
+
+    function stopFocus() {
+      clearInterval(focus.timer);
+      focus.timer = null;
+      focus.running = false;
+    }
+
+    focus.startBtn.addEventListener('click', () => {
+      if (focus.running) return;
+      if (!focus.spans.length || focus.index >= focus.spans.length) {
+        const ok = buildFocusText();
+        if (!ok) {
+          alert('Cole um texto no modo Foco antes de iniciar.');
+          return;
+        }
+      }
+
+      focus.running = true;
+      focus.timer = setInterval(() => {
+        focus.index += 1;
+        if (focus.index >= focus.spans.length) {
+          stopFocus();
+          focus.meta.textContent = `${focus.spans.length} / ${focus.spans.length} palavras destacadas`;
+          return;
+        }
+        highlightFocusWord();
+      }, secFromWpm(Number(focus.wpm.value)));
+    });
+
+    focus.pauseBtn.addEventListener('click', stopFocus);
+
+    focus.resetBtn.addEventListener('click', () => {
+      stopFocus();
+      focus.spans = [];
+      focus.index = 0;
+      focus.reader.innerHTML = '<p class="empty-message">O texto completo aparecerá aqui.</p>';
+      focus.meta.textContent = '0 / 0 palavras destacadas';
+    });
+
+    // Chunking
+    const chunk = {
+      text: document.getElementById('chunk-text'),
+      size: document.getElementById('chunk-size'),
+      wpm: document.getElementById('chunk-wpm'),
+      wpmLabel: document.getElementById('chunk-wpm-label'),
+      word: document.getElementById('chunk-word'),
+      progress: document.getElementById('chunk-progress'),
+      startBtn: document.getElementById('chunk-start'),
+      pauseBtn: document.getElementById('chunk-pause'),
+      resetBtn: document.getElementById('chunk-reset'),
+      chunks: [],
+      index: 0,
+      timer: null,
+      running: false
+    };
+
+    chunk.wpm.addEventListener('input', () => chunk.wpmLabel.textContent = chunk.wpm.value);
+
+    function buildChunks() {
+      const words = splitWords(chunk.text.value);
+      const chunkSize = Math.min(8, Math.max(2, Number(chunk.size.value) || 3));
+      chunk.size.value = chunkSize;
+      chunk.chunks = [];
+      for (let i = 0; i < words.length; i += chunkSize) {
+        chunk.chunks.push(words.slice(i, i + chunkSize).join(' '));
+      }
+      chunk.index = 0;
+      updateChunkView();
+    }
+
+    function updateChunkView() {
+      chunk.word.textContent = chunk.chunks.length ? (chunk.chunks[chunk.index] || 'Fim da leitura') : 'Pronto para começar';
+      chunk.progress.textContent = `${Math.min(chunk.index + (chunk.chunks.length ? 1 : 0), chunk.chunks.length)} / ${chunk.chunks.length} blocos`;
+    }
+
+    function stopChunk() {
+      clearInterval(chunk.timer);
+      chunk.timer = null;
+      chunk.running = false;
+    }
+
+    chunk.startBtn.addEventListener('click', () => {
+      if (chunk.running) return;
+      if (!chunk.chunks.length || chunk.index >= chunk.chunks.length) buildChunks();
+      if (!chunk.chunks.length) {
+        alert('Cole um texto no modo Chunking antes de iniciar.');
+        return;
+      }
+      updateChunkView();
+      chunk.running = true;
+      const wordsPerStep = Number(chunk.size.value) || 3;
+      chunk.timer = setInterval(() => {
+        chunk.index += 1;
+        if (chunk.index >= chunk.chunks.length) {
+          chunk.word.textContent = 'Fim da leitura';
+          chunk.progress.textContent = `${chunk.chunks.length} / ${chunk.chunks.length} blocos`;
+          stopChunk();
+          return;
+        }
+        updateChunkView();
+      }, secFromWpm(Number(chunk.wpm.value), wordsPerStep));
+    });
+
+    chunk.pauseBtn.addEventListener('click', stopChunk);
+
+    chunk.resetBtn.addEventListener('click', () => {
+      stopChunk();
+      chunk.chunks = [];
+      chunk.index = 0;
+      updateChunkView();
+    });
+
+    updateChunkView();
+
+    // Teste de Velocidade
+    const speed = {
+      text: document.getElementById('speed-text'),
+      reader: document.getElementById('speed-reader'),
+      timer: document.getElementById('speed-timer'),
+      result: document.getElementById('speed-result'),
+      resultTime: document.getElementById('result-time'),
+      resultWords: document.getElementById('result-words'),
+      resultPpm: document.getElementById('result-ppm'),
+      startBtn: document.getElementById('speed-start'),
+      stopBtn: document.getElementById('speed-stop'),
+      resetBtn: document.getElementById('speed-reset'),
+      timerId: null,
+      startAt: null,
+      elapsedSec: 0,
+      running: false
+    };
+
+    function formatTimer(sec) {
+      const m = String(Math.floor(sec / 60)).padStart(2, '0');
+      const s = String(sec % 60).padStart(2, '0');
+      return `${m}:${s}`;
+    }
+
+    function stopSpeedTimer() {
+      clearInterval(speed.timerId);
+      speed.timerId = null;
+      speed.running = false;
+    }
+
+    speed.startBtn.addEventListener('click', () => {
+      const text = speed.text.value.trim();
+      if (!text) {
+        alert('Cole ou digite um texto antes de iniciar o Teste de Velocidade.');
+        return;
+      }
+      speed.reader.textContent = text;
+      speed.result.classList.remove('show');
+
+      if (!speed.running) {
+        speed.startAt = Date.now() - speed.elapsedSec * 1000;
+        speed.running = true;
+        speed.timerId = setInterval(() => {
+          speed.elapsedSec = Math.floor((Date.now() - speed.startAt) / 1000);
+          speed.timer.textContent = formatTimer(speed.elapsedSec);
+        }, 250);
+      }
+    });
+
+    speed.stopBtn.addEventListener('click', () => {
+      if (!speed.running) return;
+      stopSpeedTimer();
+
+      const text = speed.text.value;
+      const wordCount = splitWords(text).length;
+      const minutes = speed.elapsedSec / 60;
+      const ppm = minutes > 0 ? Math.round(wordCount / minutes) : 0;
+
+      speed.resultTime.textContent = `${speed.elapsedSec}s`;
+      speed.resultWords.textContent = String(wordCount);
+      speed.resultPpm.textContent = String(ppm);
+      speed.result.classList.add('show');
+    });
+
+    speed.resetBtn.addEventListener('click', () => {
+      stopSpeedTimer();
+      speed.elapsedSec = 0;
+      speed.startAt = null;
+      speed.timer.textContent = '00:00';
+      speed.reader.innerHTML = '<p class="empty-message">O texto para leitura aparecerá aqui após clicar em Iniciar.</p>';
+      speed.result.classList.remove('show');
+    });
+  </script>
 </body>
 </html>
